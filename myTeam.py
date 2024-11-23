@@ -1,5 +1,3 @@
-import random
-
 from pacai.agents.capture.capture import CaptureAgent
 
 def createTeam(firstIndex, secondIndex, isRed):
@@ -18,7 +16,7 @@ def createTeam(firstIndex, secondIndex, isRed):
         secondAgent(secondIndex),
     ]
 
-# Copied over from pacai/agents/capture/dummy.py 
+# Copied over from pacai/agents/capture/dummy.py
 class OffensiveAgent(CaptureAgent):
     """
     A Dummy agent to serve as an example of the necessary agent structure.
@@ -57,9 +55,10 @@ class OffensiveAgent(CaptureAgent):
         # Nearest food
         foodDist = min([self.getMazeDistance(myPos, food) for food in foodList], default=1)
         # Nearest ghost
-        ghostDist = min([self.getMazeDistance(myPos, ghost) for ghost in ghostPositions], default=float('inf'))
+        ghostDist = min([self.getMazeDistance(myPos, ghost)
+                         for ghost in ghostPositions], default=float('inf'))
 
-        # Heuristics: 
+        # Heuristics:
         # Penalty if staying still
         stayPenalty = -5 if action == 'Stop' else 0
 
@@ -71,7 +70,6 @@ class OffensiveAgent(CaptureAgent):
         bestAction = None
         maxScore = float('-inf')
 
-        myPos = gameState.getAgentState(self.index).getPosition()
         foodList = self.getFood(gameState).asList()
 
         # Prioritize consuming food if adjacent
@@ -92,7 +90,7 @@ class OffensiveAgent(CaptureAgent):
 
         return bestAction
 
-# Copied over from pacai/agents/capture/dummy.py 
+# Copied over from pacai/agents/capture/dummy.py
 class DefensiveAgent(CaptureAgent):
     """
     A Dummy agent to serve as an example of the necessary agent structure.
@@ -123,24 +121,27 @@ class DefensiveAgent(CaptureAgent):
         Evaluates the state based on proximity to opponents and food.
         """
         myPos = successor.getAgentState(self.index).getPosition()
-        opponentStates = [successor.getAgentState(opponent) for opponent in self.getOpponents(successor)]
+        opponentStates = [successor.getAgentState(opponent)
+                          for opponent in self.getOpponents(successor)]
         pacmanPositions = [opponent.getPosition()
-                           for opponent in opponentStates if opponent.isPacman and opponent.getPosition()]
+                           for opponent in opponentStates
+                           if opponent.isPacman and opponent.getPosition()]
 
         # Chase enemy Pacman
         if pacmanPositions:
-            pacmanDist = min([self.getMazeDistance(myPos, pacman) for pacman in pacmanPositions], default=1)
-            return -1.5 * pacmanDist  
+            pacmanDist = min([self.getMazeDistance(myPos, pacman)
+                              for pacman in pacmanPositions], default=1)
+            return -1.5 * pacmanDist
 
     def chooseAction(self, gameState):
         actions = gameState.getLegalActions(self.index)
         bestAction = None
         maxScore = float('-inf')
 
-        myPos = gameState.getAgentState(self.index).getPosition()
         opponents = [gameState.getAgentState(opponent) for opponent in self.getOpponents(gameState)]
         pacmanPositions = [opponent.getPosition()
-                           for opponent in opponents if opponent.isPacman and opponent.getPosition()]
+                           for opponent in opponents
+                           if opponent.isPacman and opponent.getPosition()]
 
         # Prioritize capturing enemy Pacman if adjacent
         for action in actions:
