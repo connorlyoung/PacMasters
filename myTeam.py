@@ -125,13 +125,23 @@ class DefensiveAgent(CaptureAgent):
                           for opponent in self.getOpponents(successor)]
         pacmanPositions = [opponent.getPosition()
                            for opponent in opponentStates
-                           if opponent.isPacman and opponent.getPosition()]
+                           if opponent.isPacman() and opponent.getPosition()]
+        opponentPositions = [opponent.getPosition() for opponent in opponentStates]
+
+        selfPac = successor.getAgentState(self.index).isPacman()
+        wrongTerritory = 0
+        if selfPac:
+            wrongTerritory = -30
 
         # Chase enemy Pacman
         if pacmanPositions:
             pacmanDist = min([self.getMazeDistance(myPos, pacman)
                               for pacman in pacmanPositions], default=1)
             return -1.5 * pacmanDist
+        else:
+            dist = min([self.getMazeDistance(myPos, enemy)
+                        for enemy in opponentPositions], default=1)
+            return -1.5 * dist + wrongTerritory
 
     def chooseAction(self, gameState):
         actions = gameState.getLegalActions(self.index)
